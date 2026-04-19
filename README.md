@@ -1,6 +1,6 @@
 # whoop-dash
 
-Personal quantified-self dashboard powered by WHOOP. Dark terminal aesthetic, 14 analytics sections, auto-refreshes every 6 hours.
+Personal quantified-self dashboard powered by WHOOP. 14 analytics sections, auto-refreshes every 6 hours.
 
 ## What's Tracked
 
