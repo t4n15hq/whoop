@@ -401,6 +401,172 @@ table.data tr:hover td { background: rgba(212, 255, 74, 0.03); }
 .state .blink { animation: blink 1.2s steps(2) infinite; }
 @keyframes blink { 50% { opacity: 0.2; } }
 
+/* --- Readiness hero --- */
+.readiness-hero {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 8px;
+}
+.readiness-score {
+  font-size: 52px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+.readiness-band {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.readiness-score.band-GREEN  { color: var(--green); }
+.readiness-score.band-YELLOW { color: var(--yellow); }
+.readiness-score.band-RED    { color: var(--red); }
+
+/* --- Streak blocks --- */
+.streak-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+.streak-block {
+  flex: 1;
+  border: 1px solid var(--line);
+  padding: 14px 12px;
+  text-align: center;
+}
+.streak-block.green { border-color: var(--green); }
+.streak-num {
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.streak-block.green .streak-num { color: var(--green); }
+.streak-label {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* --- Calendar heatmap --- */
+.calendar-heatmap {
+  display: flex;
+  gap: 4px;
+}
+.cal-labels {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.cal-label {
+  width: 14px;
+  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  color: var(--text-faint);
+}
+.cal-grid {
+  display: flex;
+  gap: 2px;
+  flex: 1;
+  overflow-x: auto;
+}
+.cal-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.cal-cell {
+  width: 14px;
+  height: 14px;
+  border: 1px solid rgba(255,255,255,0.04);
+  cursor: default;
+  transition: opacity 0.15s;
+}
+.cal-cell:hover { opacity: 0.7; }
+
+/* --- Weekday heatmap --- */
+.weekday-heatmap {
+  display: flex;
+  gap: 4px;
+}
+.wd-cell {
+  flex: 1;
+  padding: 10px 4px;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.05);
+  min-width: 0;
+}
+.wd-day {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #0a0a0a;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.wd-val {
+  font-size: 14px;
+  font-weight: 500;
+  color: #0a0a0a;
+}
+
+/* --- Debt sparkline --- */
+.debt-sparkline {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 48px;
+  margin-top: 16px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
+.debt-bar {
+  flex: 1;
+  background: var(--yellow);
+  opacity: 0.6;
+  min-height: 2px;
+  transition: opacity 0.15s;
+}
+.debt-bar:last-child { opacity: 1; }
+.debt-bar:hover { opacity: 1; }
+.debt-arrow {
+  font-size: 28px;
+  color: var(--text-dim);
+}
+.debt-arrow.good { color: var(--green); }
+.debt-arrow.bad  { color: var(--red); }
+
+/* --- Percentile badges --- */
+.percentile {
+  display: inline-block;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  border: 1px solid var(--accent-dim);
+  padding: 1px 5px;
+  font-weight: 500;
+}
+
+/* --- Deviation flag --- */
+.deviation-flag {
+  font-size: 16px;
+  margin-left: 6px;
+  color: var(--yellow);
+  animation: pulse-flag 2s ease-in-out infinite;
+}
+@keyframes pulse-flag {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
 /* --- Recharts overrides to fit the aesthetic --- */
 .recharts-cartesian-axis-tick text {
   fill: var(--text-faint);
