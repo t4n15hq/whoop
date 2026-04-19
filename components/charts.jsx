@@ -105,6 +105,8 @@ export function StrainRecoveryScatter({ data }) {
 
 export function SleepStageAreaChart({ data }) {
   const last30 = data.slice(-30);
+  const hasStageData = last30.some((d) => d.deep_hours != null || d.rem_hours != null || d.light_hours != null);
+  if (!hasStageData) return <div style={{ color: '#4a4a4a', padding: '20px 0' }}>// awaiting sync — sleep stage data will appear after next cron run</div>;
   const ticks = pickEveryN(last30);
   return (
     <div className="chart-wrap">
@@ -204,7 +206,7 @@ export function RecoveryCalendarHeatmap({ data }) {
                 key={ci}
                 className="cal-cell"
                 style={{ background: cellColor(c.recovery) }}
-                title={`${c.date}: ${c.recovery != null ? c.recovery + '%' : 'no data'}`}
+                data-tooltip={`${shortDate(c.date)}  ${c.recovery != null ? c.recovery + '%' : '—'}`}
               />
             ))}
           </div>

@@ -79,7 +79,7 @@ export default function Dashboard() {
 
       {/* ─────────── 01 today ─────────── */}
       <section className="section">
-        <SectionHead num="01" title="Today" right={t.cycle_start ? new Date(t.cycle_start).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''} />
+        <SectionHead num="01" title="Today" right={t.cycle_start ? <span suppressHydrationWarning>{new Date(t.cycle_start).toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}</span> : ''} />
         <div className="hero">
           <div className={'cell band-' + (t.recovery_band || '')}>
             <div className="label">Recovery</div>
