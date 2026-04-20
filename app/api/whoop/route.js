@@ -10,10 +10,8 @@
 import { redis } from '@/lib/store.mjs';
 
 const STALE_MINUTES = 15;
-const EDGE_CACHE_SECONDS = 60;
-const EDGE_SWR_SECONDS = 300;
 
-export const revalidate = EDGE_CACHE_SECONDS;
+export const revalidate = 60;
 
 export async function GET(request) {
   let data = await redis.get('whoop:dashboard');
@@ -50,7 +48,7 @@ export async function GET(request) {
     status: 200,
     headers: {
       'Content-Type': 'application/json',
-      'Cache-Control': `public, s-maxage=${EDGE_CACHE_SECONDS}, stale-while-revalidate=${EDGE_SWR_SECONDS}`,
+      'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
     },
   });
 }
