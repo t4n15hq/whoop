@@ -880,6 +880,15 @@ table.data tr:hover td {
   color: var(--red);
 }
 
+/* --- In-progress cycle badge --- */
+.pending-badge {
+  color: var(--yellow);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-left: 6px;
+}
+
 /* --- Percentile badges --- */
 .percentile {
   display: inline-block;

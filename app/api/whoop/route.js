@@ -1,32 +1,37 @@
 // Public endpoint — serves the precomputed dashboard JSON from KV.
 // No auth: this is the "public quantified-self flex" endpoint.
-// Cached at the edge for 5 minutes; stale-while-revalidate for faster perceived
-// loads even after the cache expires.
+//
+// Freshness model:
+//   - GitHub Actions hits /api/cron every 15 minutes (see .github/workflows/sync.yml).
+//   - If the cron hasn't landed recently, this route auto-syncs on read when
+//     the payload is older than STALE_MINUTES.
+//   - Edge cache is kept small so page loads see fresh data.
 
 import { redis } from '@/lib/store.mjs';
 
-export const revalidate = 300;
+const STALE_MINUTES = 15;
+const EDGE_CACHE_SECONDS = 60;
+const EDGE_SWR_SECONDS = 300;
+
+export const revalidate = EDGE_CACHE_SECONDS;
 
 export async function GET(request) {
   let data = await redis.get('whoop:dashboard');
 
-  // Auto-sync if data is older than 60 minutes
   if (data?.generated_at) {
     const ageMinutes = (Date.now() - new Date(data.generated_at).getTime()) / 60000;
 
-    if (ageMinutes > 60) {
+    if (ageMinutes > STALE_MINUTES) {
       try {
         const host = request.headers.get('host');
         const protocol = request.headers.get('x-forwarded-proto') || (host.includes('localhost') ? 'http' : 'https');
         const url = `${protocol}://${host}/api/cron`;
 
-        // Wait for the sync to complete (~1-3 seconds for incremental sync)
         await fetch(url, {
           method: 'GET',
-          headers: { Authorization: `Bearer ${process.env.CRON_SECRET || ''}` }
+          headers: { Authorization: `Bearer ${process.env.CRON_SECRET || ''}` },
         });
 
-        // Refetch the freshly generated data
         data = await redis.get('whoop:dashboard');
       } catch (e) {
         console.error('Auto-sync failed:', e);
@@ -45,7 +50,7 @@ export async function GET(request) {
     status: 200,
     headers: {
       'Content-Type': 'application/json',
-      'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=1800',
+      'Cache-Control': `public, s-maxage=${EDGE_CACHE_SECONDS}, stale-while-revalidate=${EDGE_SWR_SECONDS}`,
     },
   });
 }

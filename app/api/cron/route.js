@@ -1,7 +1,5 @@
-// Vercel Cron hits this every 6 hours (see vercel.json).
-// Vercel automatically sends a request with header:
-//   Authorization: Bearer <CRON_SECRET>
-// where CRON_SECRET is an env var Vercel generates — we verify it below.
+// GitHub Actions (.github/workflows/sync.yml) hits this every 15 minutes
+// with header: Authorization: Bearer <CRON_SECRET>. We verify it below.
 
 import { WhoopClient } from '@/lib/whoop-client.mjs';
 import { kvStore, KvRecordStore, redis } from '@/lib/store.mjs';
@@ -10,7 +8,10 @@ import { compute } from '@/lib/analytics.mjs';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60; // seconds — initial backfill can take ~30s
 
-const OVERLAP_DAYS = 7;
+// WHOOP retroactively re-scores cycles/sleeps/recoveries days after they
+// happen (final sleep staging, workout HR, etc). A 30-day window makes sure
+// those updates overwrite the stale copy in KV.
+const OVERLAP_DAYS = 30;
 const INITIAL_DAYS = 365;
 
 async function notify(text) {

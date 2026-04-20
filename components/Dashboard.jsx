@@ -79,7 +79,12 @@ export default function Dashboard() {
 
       {/* ─────────── 01 today ─────────── */}
       <section className="section">
-        <SectionHead num="01" title="Today" right={t.cycle_start ? <span suppressHydrationWarning>{new Date(t.cycle_start).toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}</span> : ''} />
+        <SectionHead num="01" title="Today" right={t.cycle_start ? (
+          <span suppressHydrationWarning>
+            {new Date(t.cycle_start).toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}
+            {t.cycle_in_progress && <span className="pending-badge" title="WHOOP scores this cycle after you wake up — values update once the cycle closes."> · in progress</span>}
+          </span>
+        ) : ''} />
         <div className="hero">
           <div className={'cell band-' + (t.recovery_band || '')}>
             <div className="label">Recovery</div>

@@ -1,0 +1,38 @@
+name: sync
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: whoop-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Trigger /api/cron
+        env:
+          DASHBOARD_URL: ${{ secrets.DASHBOARD_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          set -euo pipefail
+          if [ -z "${DASHBOARD_URL}" ] || [ -z "${CRON_SECRET}" ]; then
+            echo "missing DASHBOARD_URL or CRON_SECRET secret" >&2
+            exit 1
+          fi
+          response=$(curl -sS -w "\n%{http_code}" \
+            -H "Authorization: Bearer ${CRON_SECRET}" \
+            --max-time 90 \
+            --retry 2 --retry-delay 10 --retry-connrefused \
+            "${DASHBOARD_URL%/}/api/cron")
+          body=$(echo "$response" | sed '$d')
+          code=$(echo "$response" | tail -n1)
+          echo "$body"
+          if [ "$code" != "200" ]; then
+            echo "cron returned HTTP $code" >&2
+            exit 1
+          fi
