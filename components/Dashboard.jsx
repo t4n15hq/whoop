@@ -152,6 +152,7 @@ export default function Dashboard() {
                 <div className="insight-body">
                   <div className="insight-head">{x.headline}</div>
                   {x.detail && <div className="insight-detail">{x.detail}</div>}
+                  {x.action && <div className="insight-action">{x.action}</div>}
                 </div>
               </div>
             ))}

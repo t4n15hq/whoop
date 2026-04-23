@@ -985,6 +985,23 @@ table.data tr:hover td {
   line-height: 1.5;
 }
 
+.insight-action {
+  color: var(--text);
+  font-size: 11px;
+  margin-top: 5px;
+  line-height: 1.5;
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+}
+
+.insight-action::before {
+  content: "→";
+  color: var(--accent);
+  flex-shrink: 0;
+  font-weight: 500;
+}
+
 .insight-empty {
   padding: 18px 20px;
   color: var(--text-dim);
