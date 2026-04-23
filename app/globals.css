@@ -920,6 +920,92 @@ table.data tr:hover td {
   }
 }
 
+/* --- Signals / insights read-out --- */
+.insights {
+  border: 1px solid var(--line-bright);
+  background: var(--bg-elev);
+}
+
+.insight-row {
+  display: grid;
+  grid-template-columns: 3px 96px 1fr;
+  align-items: baseline;
+  gap: 18px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.insight-row:last-child {
+  border-bottom: none;
+}
+
+.insight-bar {
+  align-self: stretch;
+  background: var(--text-faint);
+}
+
+.insight-bar.alert {
+  background: var(--red);
+}
+
+.insight-bar.warn {
+  background: var(--yellow);
+}
+
+.insight-bar.good {
+  background: var(--green);
+}
+
+.insight-bar.neutral {
+  background: var(--accent);
+}
+
+.insight-cat {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  align-self: baseline;
+}
+
+.insight-body {
+  min-width: 0;
+}
+
+.insight-head {
+  color: var(--text);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.insight-detail {
+  color: var(--text-dim);
+  font-size: 11px;
+  margin-top: 3px;
+  line-height: 1.5;
+}
+
+.insight-empty {
+  padding: 18px 20px;
+  color: var(--text-dim);
+  font-size: 12px;
+}
+
+@media (max-width: 560px) {
+  .insight-row {
+    grid-template-columns: 3px 1fr;
+    row-gap: 4px;
+  }
+
+  .insight-cat {
+    grid-column: 2;
+  }
+
+  .insight-body {
+    grid-column: 2;
+  }
+}
+
 /* --- Recharts overrides to fit the aesthetic --- */
 .recharts-cartesian-axis-tick text {
   fill: var(--text-faint);

@@ -49,6 +49,7 @@ export default function Dashboard() {
   const pr = data.personal_records || {};
   const vt = data.vital_trends || {};
   const pct = data.percentiles || {};
+  const ins = Array.isArray(data.insights) ? data.insights : [];
 
   const generatedAge = Math.round((Date.now() - new Date(data.generated_at).getTime()) / 60000);
   const stale = generatedAge > 8 * 60;
@@ -128,10 +129,40 @@ export default function Dashboard() {
         </div>
       </section>
 
-      {/* ─────────── 02 readiness ─────────── */}
+      {/* ─────────── 02 signals / auto read-out ─────────── */}
+      {ins.length > 0 && (
+        <section className="section">
+          <SectionHead
+            num="02"
+            title="Signals"
+            right={(() => {
+              const warn = ins.filter((x) => x.kind === 'alert' || x.kind === 'warn').length;
+              const good = ins.filter((x) => x.kind === 'good').length;
+              const parts = [];
+              if (warn) parts.push(`${warn} watch`);
+              if (good) parts.push(`${good} positive`);
+              return parts.join(' · ') || `${ins.length} observations`;
+            })()}
+          />
+          <div className="insights">
+            {ins.map((x, i) => (
+              <div className="insight-row" key={i}>
+                <span className={'insight-bar ' + x.kind} />
+                <span className="insight-cat">{x.category}</span>
+                <div className="insight-body">
+                  <div className="insight-head">{x.headline}</div>
+                  {x.detail && <div className="insight-detail">{x.detail}</div>}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* ─────────── 03 readiness ─────────── */}
       {rd.score != null && (
         <section className="section">
-          <SectionHead num="02" title="Readiness" right="composite score" />
+          <SectionHead num="03" title="Readiness" right="composite score" />
           <div className="grid-2">
             <Panel title="Daily readiness">
               <div className="readiness-hero">
@@ -169,7 +200,7 @@ export default function Dashboard() {
 
       {/* ─────────── 03 vitals ─────────── */}
       <section className="section">
-        <SectionHead num="03" title="Vitals" />
+        <SectionHead num="04" title="Vitals" />
         <div className="grid-3">
           <Panel title="Resting HR" right="bpm">
             <div style={{ fontSize: 28, fontWeight: 500, letterSpacing: '-0.02em', marginBottom: 8 }}>
@@ -211,7 +242,7 @@ export default function Dashboard() {
 
       {/* ─────────── 04 recovery × strain timeseries ─────────── */}
       <section className="section">
-        <SectionHead num="04" title="Recovery × Strain · 180d" right={`n=${ts.length}`} />
+        <SectionHead num="05" title="Recovery × Strain · 180d" right={`n=${ts.length}`} />
         <Panel title="recovery % overlaid with day strain" right="dashed = 67/34 recovery thresholds">
           <RecoveryStrainChart data={ts} />
         </Panel>
@@ -219,7 +250,7 @@ export default function Dashboard() {
 
       {/* ─────────── 05 HRV/RHR + sleep hours ─────────── */}
       <section className="section">
-        <SectionHead num="05" title="Autonomic & Sleep trendlines" />
+        <SectionHead num="06" title="Autonomic & Sleep trendlines" />
         <div className="grid-2">
           <Panel title="HRV (ms) · RHR (bpm) · 180d" right="dashed = 7d rolling avg">
             <HRVRHRChart data={ts} />
@@ -233,7 +264,7 @@ export default function Dashboard() {
       {/* ─────────── 06 training load ─────────── */}
       {tl.series?.length > 0 && (
         <section className="section">
-          <SectionHead num="06" title="Training Load · ACWR" right={`acute:chronic = ${tl.acwr ?? '—'}`} />
+          <SectionHead num="07" title="Training Load · ACWR" right={`acute:chronic = ${tl.acwr ?? '—'}`} />
           <Panel title="Acute:Chronic Workload Ratio" right="0.8 = detraining · 1.3 = optimal ceiling · 1.5 = danger">
             <TrainingLoadChart data={tl.series} />
           </Panel>
@@ -242,7 +273,7 @@ export default function Dashboard() {
 
       {/* ─────────── 07 sleep deep-dive ─────────── */}
       <section className="section">
-        <SectionHead num="07" title="Sleep" right={`${slp.last_30_nights || 0} nights`} />
+        <SectionHead num="08" title="Sleep" right={`${slp.last_30_nights || 0} nights`} />
         <div className="grid-2">
           <Panel title="Last night · stage composition">
             {s?.stage_pct && s.hours_asleep ? (
@@ -315,7 +346,7 @@ export default function Dashboard() {
 
       {/* ─────────── 08 recovery distribution ─────────── */}
       <section className="section">
-        <SectionHead num="08" title="Recovery distribution · 30d" />
+        <SectionHead num="09" title="Recovery distribution · 30d" />
         <div className="grid-2">
           <Panel title="Band share">
             {rec.band_pct_30d ? (
@@ -366,7 +397,7 @@ export default function Dashboard() {
 
       {/* ─────────── 09 recovery calendar ─────────── */}
       <section className="section">
-        <SectionHead num="09" title="Recovery calendar · 90d" right="green / yellow / red" />
+        <SectionHead num="10" title="Recovery calendar · 90d" right="green / yellow / red" />
         <Panel title="recovery heatmap" right="hover for details">
           <RecoveryCalendarHeatmap data={ts} />
         </Panel>
@@ -374,7 +405,7 @@ export default function Dashboard() {
 
       {/* ─────────── 10 strain / calories ─────────── */}
       <section className="section">
-        <SectionHead num="10" title="Strain & Energy · 30d" />
+        <SectionHead num="11" title="Strain & Energy · 30d" />
         <div className="grid-2">
           <Panel title="Strain profile">
             <KV rows={[
@@ -422,7 +453,7 @@ export default function Dashboard() {
       {/* ─────────── 11 day of week patterns ─────────── */}
       {dow.length > 0 && (
         <section className="section">
-          <SectionHead num="11" title="Day-of-Week Patterns · 90d" right="avg by weekday" />
+          <SectionHead num="12" title="Day-of-Week Patterns · 90d" right="avg by weekday" />
           <div className="grid-2">
             <Panel title="Avg recovery by weekday">
               <WeekdayHeatmap data={dow} metric="avg_recovery" />
@@ -456,7 +487,7 @@ export default function Dashboard() {
 
       {/* ─────────── 12 workouts ─────────── */}
       <section className="section">
-        <SectionHead num="12" title="Workouts · 30d" right={`n=${wk.last_30_days_count || 0}`} />
+        <SectionHead num="13" title="Workouts · 30d" right={`n=${wk.last_30_days_count || 0}`} />
         <div className="grid-2">
           <Panel title="Heart-rate zone minutes">
             {wk.hr_zone_minutes_30d && wk.hr_zone_pct_30d ? (
@@ -519,7 +550,7 @@ export default function Dashboard() {
       {/* ─────────── 13 personal records ─────────── */}
       {pr.all_time && (
         <section className="section">
-          <SectionHead num="13" title="Personal Records" />
+          <SectionHead num="14" title="Personal Records" />
           <div className="grid-2">
             <Panel title="All-time bests">
               <KV rows={[
@@ -544,7 +575,7 @@ export default function Dashboard() {
 
       {/* ─────────── 14 correlations ─────────── */}
       <section className="section">
-        <SectionHead num="14" title="What drives your recovery?" right={`pearson r · n=${corr.n_pairs || 0}`} />
+        <SectionHead num="15" title="What drives your recovery?" right={`pearson r · n=${corr.n_pairs || 0}`} />
         <Panel title="Correlations with next-day recovery score" right="|r| > 0.3 is meaningful">
           <div>
             {corr.correlations_with_recovery && Object.entries({
