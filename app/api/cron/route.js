@@ -36,17 +36,22 @@ export async function GET(request) {
 
   const started = Date.now();
   try {
-    // First-run bootstrap: if KV has no tokens but the env has a seed refresh
-    // token, write it into KV so the client can use it.
+    // Bootstrap / re-auth: seed the env refresh token into KV when there's no
+    // token yet, OR when the env seed has changed (a fresh token was pasted in
+    // after the stored one died — WHOOP rotates and a consumed token 400s
+    // forever). 'whoop:seed' tracks the last-applied seed; it's a separate key
+    // so the rotating refresh_token in 'whoop:tokens' never trips the check.
     const existingTokens = await redis.get('whoop:tokens');
     const seedToken = process.env.WHOOP_INITIAL_REFRESH_TOKEN;
-    if (!existingTokens && seedToken) {
+    const appliedSeed = await redis.get('whoop:seed');
+    if (seedToken && (!existingTokens || appliedSeed !== seedToken)) {
       await redis.set('whoop:tokens', {
         access_token: null,
         refresh_token: seedToken,
         expires_at: 0,
         scope: null,
       });
+      await redis.set('whoop:seed', seedToken);
     }
 
     const client = new WhoopClient({
